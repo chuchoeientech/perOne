@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-62di2nnbar+ejeo)m^_$_l_6-3)%jh#fy6jc@y4_kin$i_q@xv
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = ["perone.onrender.com", "localhost"]
+ALLOWED_HOSTS = ["https://perone.onrender.com/", "localhost", "127.0.0.1"]
 
 ALLOWED_HOSTS = []
 
