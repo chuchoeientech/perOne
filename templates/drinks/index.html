@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>perOne</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    </style>
+</head>
+
+<body
+    class="bg-gradient-to-br from-gray-900 to-gray-800 text-white flex flex-col items-center justify-center min-h-screen font-[Poppins] p-4">
+
+    <!-- Contenedor Principal -->
+    <div class="bg-gray-800 p-6 rounded-xl shadow-lg w-full max-w-xs text-center border border-gray-700">
+        <!-- Saludo al usuario -->
+        <p class="text-lg font-semibold text-white mb-4">👋 Bienvenido</p>
+
+        <h1 class="text-2xl font-bold mb-4 text-yellow-400">🍻 perOne</h1>
+
+        <p class="text-base mb-4">Cervezas consumidas: <span id="beer-count" class="font-bold text-green-400">{{
+                beer_count }}</span></p>
+
+        <!-- Botón para sumar cerveza -->
+        <button id="add-beer"
+            class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg w-full transition active:scale-95 flex items-center justify-center gap-2 text-lg">
+            ➕ Sumar Cerveza
+        </button>
+
+        <!-- Input para el precio de la cerveza -->
+        <input type="number" id="beerPrice" placeholder="Precio de la cerveza"
+            class="w-full p-2 mt-4 mb-2 bg-gray-700 text-white rounded-lg border border-gray-600 text-center text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+
+        <!-- Botón para finalizar sesión -->
+        <button id="finishSession"
+            class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg w-full transition active:scale-95 flex items-center justify-center gap-2 text-lg">
+            ✅ Finalizar sesión
+        </button>
+
+        <div id="sessionResult" class="mt-4 text-yellow-300 font-semibold text-sm"></div>
+
+        <!-- Botón para cerrar sesión -->
+        <a href="{% url 'logout' %}" class="mt-4 inline-block text-sm text-gray-400 hover:text-white">🚪 Cerrar
+            sesión</a>
+    </div>
+
+    <input type="hidden" id="sessionId" value="{{ session_id }}">
+
+    <script>
+        $(document).ready(function () {
+            $("#add-beer").click(function () {
+                $.post("{% url 'update_beer' %}", {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    session_id: $("#sessionId").val()
+                }, function (data) {
+                    $("#beer-count").text(data.beer_count);
+                });
+            });
+        });
+
+        document.getElementById("finishSession").addEventListener("click", function () {
+            let beerPrice = document.getElementById("beerPrice").value || 0;
+            let sessionId = document.getElementById("sessionId").value;
+            let csrfToken = "{{ csrf_token }}";
+
+            fetch("/drinks/finish-session/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrfToken
+                },
+                body: `session_id=${sessionId}&beer_price=${beerPrice}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("Error: " + data.error);
+                    } else {
+                        document.getElementById("sessionResult").innerHTML = `
+                            🍺 Bebiste <span class="text-green-400">${data.beer_count}</span> cervezas.<br>
+                            💰 Total: <span class="text-yellow-400">${data.total_price} Gs.</span><br>
+                            🏷️ Con propina (10%): <span class="text-yellow-500">${data.total_price_with_tip} Gs.</span>`;
+
+                        // Reiniciar valores
+                        document.getElementById("beer-count").textContent = "0";
+                        document.getElementById("beerPrice").value = "";
+                        document.getElementById("sessionId").value = data.new_session_id;
+                    }
+                });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let beerCount = "{{ beer_count }}";
+            document.getElementById("beer-count").textContent = beerCount;
+        });
+    </script>
+
+</body>
+
+</html>

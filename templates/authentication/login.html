@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | perOne</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    </style>
+</head>
+
+<body
+    class="bg-gradient-to-br from-gray-900 to-gray-800 text-white flex flex-col items-center justify-center min-h-screen font-[Poppins] p-4">
+
+    <!-- Contenedor Principal -->
+    <div class="bg-gray-800 p-6 rounded-xl shadow-lg w-full max-w-xs text-center border border-gray-700">
+        <h2 class="text-2xl font-bold mb-4 text-yellow-400">🍻 perOne</h2>
+        <p class="text-lg font-semibold text-white mb-4">🔑 Iniciar Sesión</p>
+
+        <!-- Mensajes de error -->
+        {% if messages %}
+        <ul class="mb-4 text-red-400 text-sm">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <!-- Formulario -->
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Usuario" required
+                class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 text-center text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            <input type="password" name="password" placeholder="Contraseña" required
+                class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 text-center text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            <button type="submit"
+                class="w-full bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg transition active:scale-95 flex items-center justify-center gap-2 text-lg">
+                ✅ Iniciar Sesión
+            </button>
+        </form>
+
+        <p class="mt-4 text-sm">
+            ¿No tienes cuenta?
+            <a href="{% url 'register' %}" class="text-yellow-400 hover:underline">Regístrate aquí</a>
+        </p>
+    </div>
+
+</body>
+
+</html>
