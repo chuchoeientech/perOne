@@ -48,7 +48,43 @@
             sesión</a>
     </div>
 
+    <!-- Tabla de sesiones pasadas -->
+    <!-- Historial de sesiones optimizado para mobile -->
+    <div class="bg-gray-800 p-4 rounded-lg shadow-lg w-full max-w-xs mt-6 border border-gray-700">
+        <h2 class="text-lg font-semibold text-yellow-400 text-center mb-3">📜 Historial</h2>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-gray-300 min-w-[350px]">
+                <thead>
+                    <tr class="border-b border-gray-600">
+                        <th class="p-2 text-center">🍺</th>
+                        <th class="p-2 text-center">💰</th>
+                        <th class="p-2 text-center">🏷️</th>
+                        <th class="p-2 text-center">📅</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session in sessions %}
+                    <tr class="border-b border-gray-700 text-center">
+                        <td class="p-2">{{ session.beer_count }}</td>
+                        <td class="p-2">{{ session.total_price|floatformat:0 }} Gs.</td>
+                        <td class="p-2">{{ session.total_with_tip|floatformat:0 }} Gs.</td>
+                        <td class="p-2 whitespace-nowrap">{{ session.timestamp }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="p-2 text-center text-gray-500">Sin sesiones previas</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
     <input type="hidden" id="sessionId" value="{{ session_id }}">
+    <input type="hidden" id="beerPriceValue" value="{{ beer_price }}">
 
     <script>
         $(document).ready(function () {
@@ -81,9 +117,9 @@
                         alert("Error: " + data.error);
                     } else {
                         document.getElementById("sessionResult").innerHTML = `
-                            🍺 Bebiste <span class="text-green-400">${data.beer_count}</span> cervezas.<br>
-                            💰 Total: <span class="text-yellow-400">${data.total_price} Gs.</span><br>
-                            🏷️ Con propina (10%): <span class="text-yellow-500">${data.total_price_with_tip} Gs.</span>`;
+🍺 Bebiste <span class="text-green-400">${data.beer_count}</span> cervezas.<br>
+💰 Total: <span class="text-yellow-400">${data.total_price}</span><br>
+🏷️ Con propina (10%): <span class="text-yellow-500">${data.total_price_with_tip}</span>`;
 
                         // Reiniciar valores
                         document.getElementById("beer-count").textContent = "0";
@@ -91,6 +127,8 @@
                         document.getElementById("sessionId").value = data.new_session_id;
                     }
                 });
+
+
         });
 
         document.addEventListener("DOMContentLoaded", function () {
