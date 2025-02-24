@@ -3,7 +3,8 @@ import uuid
 
 
 class DrinkSession(models.Model):
-    session_id = models.UUIDField(unique=True, editable=False)
+    session_id = models.UUIDField(
+        unique=True, editable=False, default=uuid.uuid4)
     timestamp = models.DateTimeField(auto_now_add=True)
     beer_count = models.IntegerField(default=0)
 
@@ -16,7 +17,8 @@ class DrinkSession(models.Model):
         return self.beer_count * beer_price
 
     def total_price_with_tip(self, beer_price):
-        return self.total_price(beer_price) * 1.1
+        propina = self.total_price(beer_price) * 0.10
+        return self.total_price(beer_price) + propina
 
     def __str__(self):
         return f"Session {self.session_id} - {self.beer_count} beers"
